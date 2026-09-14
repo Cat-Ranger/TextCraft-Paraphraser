@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f8fb" />
+    <meta
+      name="description"
+      content="TextCraft is a focused paraphraser and grammar checker for clearer writing."
+    />
+    <title>TextCraft</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='30' fill='%23155eef'/><rect x='22' y='22' width='56' height='56' rx='16' fill='none' stroke='white' stroke-width='10'/><circle cx='68' cy='32' r='10' fill='white'/></svg>"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <div class="container">
+        <header class="site-header">
+          <a class="brand" href="#editor" aria-label="TextCraft home">
+            <span class="logo-mark" aria-hidden="true"
+              ><span></span><i></i
+            ></span>
+            <span>TextCraft</span>
+          </a>
+          <nav class="main-nav" aria-label="Main navigation">
+            <a
+              class="nav-link active"
+              id="paraphraser-tab"
+              href="#editor"
+              aria-current="page"
+              >Paraphraser</a
+            >
+            <a class="nav-link" id="grammar-tab" href="#editor"
+              >Grammar Checker</a
+            >
+          </nav>
+          <button
+            class="icon-button"
+            id="theme-toggle"
+            type="button"
+            aria-label="Switch to dark mode"
+          >
+            <span aria-hidden="true">◐</span>
+          </button>
+        </header>
+
+        <section class="editor-section" id="editor">
+          <div class="intro">
+            <p class="eyebrow">Write with confidence</p>
+            <h1>Make every word count.</h1>
+            <p class="intro-copy">
+              Refine your writing, find your voice, and communicate clearly with
+              a little help from TextCraft.
+            </p>
+          </div>
+
+          <div class="editor-card">
+            <div class="tone-bar">
+              <span class="tone-label">Tone</span>
+              <div class="tone-options" role="group" aria-label="Tone mode">
+                <button
+                  class="tone-button active"
+                  type="button"
+                  aria-pressed="true"
+                >
+                  Standard
+                </button>
+                <button class="tone-button" type="button" aria-pressed="false">
+                  Fluency
+                </button>
+                <button class="tone-button" type="button" aria-pressed="false">
+                  Formal
+                </button>
+                <button class="tone-button" type="button" aria-pressed="false">
+                  Shorten
+                </button>
+              </div>
+            </div>
+
+            <div class="text-panels">
+              <section
+                class="text-panel input-panel"
+                aria-labelledby="source-label"
+              >
+                <label id="source-label" for="source-text">Original text</label>
+                <textarea
+                  id="source-text"
+                  maxlength="5000"
+                  placeholder="Type or paste text..."
+                ></textarea>
+                <div class="panel-footer">
+                  <span class="character-count" id="character-count"
+                    >0 / 5,000</span
+                  >
+                  <button
+                    class="primary-button"
+                    id="paraphrase-button"
+                    type="button"
+                    disabled
+                  >
+                    Paraphrase
+                  </button>
+                </div>
+              </section>
+
+              <section
+                class="text-panel output-panel"
+                aria-labelledby="result-label"
+              >
+                <div class="result-heading">
+                  <span id="result-label">TextCraft result</span
+                  ><span class="ready-badge" id="ready-badge" hidden
+                    >Ready</span
+                  >
+                </div>
+                <div class="result-content" id="result-content">
+                  <span class="placeholder"
+                    >Your result will appear here...</span
+                  >
+                </div>
+                <div class="panel-footer output-actions">
+                  <button
+                    class="text-button"
+                    id="copy-button"
+                    type="button"
+                    disabled
+                  >
+                    Copy Text
+                  </button>
+                  <button
+                    class="secondary-button"
+                    id="read-button"
+                    type="button"
+                    disabled
+                  >
+                    Read Aloud
+                  </button>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="features-section"
+          id="features"
+          aria-label="TextCraft features"
+        >
+          <article class="feature-card">
+            <span class="feature-number">01</span>
+            <h2>AI Powered</h2>
+            <p>Smart suggestions that preserve your original meaning.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-number">02</span>
+            <h2>Multiple Tones</h2>
+            <p>Adapt your writing for any audience and intention.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-number">03</span>
+            <h2>100% Free</h2>
+            <p>Polish your words without subscriptions or limits.</p>
+          </article>
+        </section>
+      </div>
+    </main>
+    <script src="script.js" defer></script>
+  </body>
+</html>
