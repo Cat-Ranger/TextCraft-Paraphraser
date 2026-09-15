@@ -72,15 +72,19 @@ app.post("/api/process-text", apiLimiter, async (req, res) => {
 
     if (!response.ok) {
       console.error("Gemini API Error:", data);
-      return res.status(response.status).json(data);
+
+      return res.status(502).json({
+        error: "The AI service is currently unavailable.",
+      });
     }
 
     res.json(data);
   } catch (error) {
     console.error("Server Error:", error);
-    res
-      .status(500)
-      .json({ error: `Failed to communicate with API: ${error.message}` });
+
+    res.status(500).json({
+      error: "An internal server error occurred.",
+    });
   }
 });
 
