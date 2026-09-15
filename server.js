@@ -8,15 +8,15 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-// Limit incoming JSON body payload size to 100kb (prevents huge payload attacks)
+// Limit incoming JSON body payload size to 100kb
 app.use(express.json({ limit: "100kb" }));
 
 // Configure rate limiter (10 requests per minute per IP)
 const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute window
-  max: 10, // Limit each IP to 10 requests per windowMs
-  standardHeaders: true, // Return rate limit info in RateLimit-* headers
-  legacyHeaders: false, // Disable X-RateLimit-* headers
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
   message: {
     error:
       "Too many requests from this IP. Please wait a minute before trying again.",
@@ -28,7 +28,7 @@ app.post("/api/process-text", apiLimiter, async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    // 1. Check if prompt exists and is a string
+    // Check if prompt exists and is a string
     if (!prompt || typeof prompt !== "string") {
       return res.status(400).json({
         error: "Invalid request. Prompt must be a valid text string.",
@@ -37,12 +37,14 @@ app.post("/api/process-text", apiLimiter, async (req, res) => {
 
     const trimmedPrompt = prompt.trim();
 
-    // 2. Check for empty string after trimming
+    // Check for empty string after trimming
     if (trimmedPrompt.length === 0) {
-      return res.status(400).json({ error: "Prompt cannot be empty." });
+      return res.status(400).json({
+        error: "Prompt cannot be empty.",
+      });
     }
 
-    // 3. Enforce 5,000 character limit (matches your frontend UI limit)
+    // Enforce 5,000 character limit
     if (trimmedPrompt.length > 5000) {
       return res.status(400).json({
         error:
@@ -50,38 +52,66 @@ app.post("/api/process-text", apiLimiter, async (req, res) => {
       });
     }
 
+    // Get Gemini API key from environment variables
     const apiKey = process.env.GEMINI_API_KEY;
+
     if (!apiKey) {
       console.error("ERROR: GEMINI_API_KEY is missing from your .env file!");
-      return res
-        .status(500)
-        .json({ error: "Server configuration error: Missing API Key." });
+
+      return res.status(500).json({
+        error: "Server configuration error. Missing API Key.",
+      });
     }
 
+    // Gemini API request
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: trimmedPrompt }] }],
+        contents: [
+          {
+            parts: [
+              {
+                text: trimmedPrompt,
+              },
+            ],
+          },
+        ],
       }),
     });
 
     const data = await response.json();
 
+    // Handle Gemini API errors
     if (!response.ok) {
-      console.error("Gemini API Error:", data);
+      console.error("Gemini API Error:", response.status, data);
 
+      // Gemini quota/rate limit exceeded
+      if (response.status === 429) {
+        return res.status(429).json({
+          error: "The AI usage limit has been reached. Please try again later.",
+          retryAfter: 60,
+        });
+      }
+
+      // Other Gemini API errors
       return res.status(502).json({
-        error: "The AI service is currently unavailable.",
+        error:
+          "The AI service is currently unavailable. Please try again later.",
       });
     }
 
+    // Successful response
     res.json(data);
   } catch (error) {
+    // Log detailed error on the server
     console.error("Server Error:", error);
 
+    // Return a safe error message to the client
     res.status(500).json({
       error: "An internal server error occurred.",
     });
